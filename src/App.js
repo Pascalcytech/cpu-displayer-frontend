@@ -1,21 +1,18 @@
-// src/App.js
+// App.js
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CPUList from './components/CPUList';
 import CPUEdit from './components/CPUEdit';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header>
-        <h1>My CPU Management App</h1>
-      </header>
-      <main>
-        {/* Display the CPU list and editing form */}
-        <CPUList />
-        <CPUEdit />
-      </main>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<CPUList />} />
+        <Route path="/edit/:id" element={<CPUEdit />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

@@ -1,4 +1,3 @@
-// src/components/CPUList.js
 import React, { useEffect, useState } from 'react';
 import cpuService from '../services/cpuService';
 import socketService from '../services/socketService';

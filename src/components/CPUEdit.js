@@ -96,7 +96,7 @@ const CPUEdit = () => {
         />
         <select
           value={cpu.socket ? cpu.socket.id : ''}
-          onChange={handleSocketChange} // Use the new change handler
+          onChange={handleSocketChange}
           required
         >
           <option value="">Select Socket</option>

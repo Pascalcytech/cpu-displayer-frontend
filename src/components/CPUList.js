@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 const CPUList = () => {
   const [cpus, setCpus] = useState([]);
-  const [sockets, setSockets] = useState({}); // To cache socket names
+  const [sockets, setSockets] = useState({});
 
   useEffect(() => {
     const fetchCPUs = async () => {
@@ -44,7 +44,7 @@ const CPUList = () => {
       <ul>
         {cpus.map(cpu => (
           <li key={cpu.id}>
-            {cpu.brand} {cpu.model} - {cpu.socket ? sockets[cpu.socket.id] || 'Socket name not available' : 'Socket not assigned'}
+            {cpu.brand} {cpu.model} - {sockets[cpu.id] || 'Socket not assigned'}
             <Link to={`/edit/${cpu.id}`}>Edit</Link>
           </li>
         ))}

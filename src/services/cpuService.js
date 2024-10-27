@@ -8,13 +8,18 @@ const getAllCPUs = () => {
   return axios.get(`${API_URL}/cpus`);
 };
 
-const getAllSockets = () => {
-  return axios.get(`${API_URL}/sockets`);
+const getCPUById = (id) => {
+  return axios.get(`${API_URL}/cpus/${id}`); // Fetch CPU by ID
+};
+
+const updateCPU = (id, cpuData) => {
+  return axios.put(`${API_URL}/cpus/${id}`, cpuData); // Update CPU by ID
 };
 
 const cpuService = {
   getAllCPUs,
-  getAllSockets,
+  getCPUById,
+  updateCPU,
 };
 
 export default cpuService;

@@ -1,4 +1,3 @@
-// src/components/CPUEdit.js
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import cpuService from '../services/cpuService';
@@ -6,7 +5,7 @@ import socketService from '../services/socketService';
 
 const CPUEdit = () => {
   const { id } = useParams();
-  const [cpu, setCpu] = useState({ brand: '', model: '', socket: {} });
+  const [cpu, setCpu] = useState({ brand: '', model: '', socket: null }); // Initialize socket as null
   const [sockets, setSockets] = useState([]);
   const navigate = useNavigate();
 
@@ -23,7 +22,7 @@ const CPUEdit = () => {
     const fetchSockets = async () => {
       try {
         const response = await socketService.getAllSockets();
-        setSockets(response.data); // Assuming this is an array of sockets
+        setSockets(response.data);
       } catch (error) {
         console.error("Error fetching sockets:", error);
       }
@@ -31,12 +30,17 @@ const CPUEdit = () => {
 
     fetchCPU();
     fetchSockets();
-  }, [id]); // Runs whenever the id changes
+  }, [id]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      await cpuService.updateCPU(id, cpu);
+      // Ensure to send the complete socket object
+      const updatedCPU = {
+        ...cpu,
+        socket: { id: cpu.socket.id } // Include the current socket ID
+      };
+      await cpuService.updateCPU(id, updatedCPU);
       navigate('/'); // Redirect to CPU list after updating
     } catch (error) {
       console.error("Error updating CPU:", error);
@@ -62,10 +66,11 @@ const CPUEdit = () => {
           required
         />
         <select
-          value={cpu.socket.id}
-          onChange={(e) => setCpu({ ...cpu, socket: { id: e.target.value } })} // Assuming socket.id is a number
+          value={cpu.socket ? cpu.socket.id : ''} // Check if socket is defined
+          onChange={(e) => setCpu({ ...cpu, socket: { id: e.target.value } })}
           required
         >
+          <option value="">Select Socket</option>
           {sockets.map(socket => (
             <option key={socket.id} value={socket.id}>
               {socket.name}

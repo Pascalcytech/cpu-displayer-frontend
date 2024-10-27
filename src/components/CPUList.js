@@ -44,7 +44,7 @@ const CPUList = () => {
       <ul>
         {cpus.map(cpu => (
           <li key={cpu.id}>
-          {cpu.brand} {cpu.model} - {sockets[cpu.socket_id] || 'Socket not assigned'} <span> </span>
+          {cpu.brand} {cpu.model} - {sockets[cpu.socketId] || 'Socket not assigned'} <span> </span>
           <Link to={`/edit/${cpu.id}`}>Edit</Link>
           </li>
         ))}

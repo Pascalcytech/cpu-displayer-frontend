@@ -5,8 +5,9 @@ import socketService from '../services/socketService';
 
 const CPUEdit = () => {
   const { id } = useParams();
-  const [cpu, setCpu] = useState({ brand: '', model: '', socket: null }); // Initialize socket as null
+  const [cpu, setCpu] = useState({ brand: '', model: '', socket: null });
   const [sockets, setSockets] = useState([]);
+  const [error, setError] = useState(''); // State for error message
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,6 +17,7 @@ const CPUEdit = () => {
         setCpu(response.data);
       } catch (error) {
         console.error("Error fetching CPU:", error);
+        setError('Failed to fetch CPU.'); // Set error message
       }
     };
 
@@ -25,6 +27,7 @@ const CPUEdit = () => {
         setSockets(response.data);
       } catch (error) {
         console.error("Error fetching sockets:", error);
+        setError('Failed to fetch sockets.'); // Set error message
       }
     };
 
@@ -32,24 +35,50 @@ const CPUEdit = () => {
     fetchSockets();
   }, [id]);
 
+  const handleSocketChange = async (event) => {
+    const selectedSocketId = event.target.value;
+    const selectedSocket = sockets.find(socket => socket.id === Number(selectedSocketId));
+    
+    if (selectedSocket) {
+      setCpu({ ...cpu, socket: { id: selectedSocket.id, name: selectedSocket.name } });
+    } else {
+      console.error("Invalid socket selected.");
+      setError('Please select a valid socket.'); // Display an error message
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+    
+    // Validate that the socket is selected
+    if (!cpu.socket || !cpu.socket.id) {
+        console.error("Socket is not selected.");
+        setError('Please select a valid socket.'); // Display an error message
+        return; // Exit the function if the validation fails
+    }
+
     try {
-      // Ensure to send the complete socket object
-      const updatedCPU = {
-        ...cpu,
-        socket: { id: cpu.socket.id } // Include the current socket ID
-      };
-      await cpuService.updateCPU(id, updatedCPU);
-      navigate('/'); // Redirect to CPU list after updating
+        console.log("passage");
+        console.log(cpu.socket.id);
+        const updatedCPU = {
+            brand: cpu.brand,
+            model: cpu.model,
+            socket: { id: Number(cpu.socket.id) } // Ensure the ID is a number
+        };
+        
+        // Call the API to update the CPU
+        await cpuService.updateCPU(id, updatedCPU);
+        navigate('/'); // Redirect to CPU list after updating
     } catch (error) {
-      console.error("Error updating CPU:", error);
+        console.error("Error updating CPU:", error);
+        setError('Failed to update CPU.'); // Set error message
     }
   };
 
   return (
     <div>
       <h1>Edit CPU</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -66,8 +95,8 @@ const CPUEdit = () => {
           required
         />
         <select
-          value={cpu.socket ? cpu.socket.id : ''} // Check if socket is defined
-          onChange={(e) => setCpu({ ...cpu, socket: { id: e.target.value } })}
+          value={cpu.socket ? cpu.socket.id : ''}
+          onChange={handleSocketChange} // Use the new change handler
           required
         >
           <option value="">Select Socket</option>

@@ -48,6 +48,7 @@ const CPUList = () => {
           </li>
         ))}
       </ul>
+          <Link to={`/sockets`}>Add new sockect</Link>
     </div>
   );
 };
